@@ -260,15 +260,15 @@ bool UNiagaraDataInterfaceWindField::GetFunctionHLSL(const FNiagaraDataInterface
     if (FunctionInfo.DefinitionName == SampleWindFieldName)
     {
         static const TCHAR* HlslTemplate = TEXT(R"(
-void {FunctionName}(float X, float Y, float Z, out float OutX, out float OutY, out float OutZ)
-{
-    float3 WorldPos = float3(X, Y, Z);
-    float3 WindVelocity = {ParameterName}_SampleWindTexture(WorldPos);
-    OutX = WindVelocity.x;
-    OutY = WindVelocity.y;
-    OutZ = WindVelocity.z;
-}
-)");
+            void {FunctionName}(float X, float Y, float Z, out float OutX, out float OutY, out float OutZ)
+            {
+                float3 WorldPos = float3(X, Y, Z);
+                float3 WindVelocity = {ParameterName}_SampleWindTexture(WorldPos);
+                OutX = WindVelocity.x;
+                OutY = WindVelocity.y;
+                OutZ = WindVelocity.z;
+            }
+            )");
 
         TMap<FString, FStringFormatArg> Args;
         Args.Add(TEXT("FunctionName"), FunctionInfo.InstanceName);
