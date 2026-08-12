@@ -410,21 +410,9 @@ void FNDIWindFieldProxy::PreStage(const FNDIGpuComputePreStageContext& Context)
     if (!Buffer->VelocityGridBufferRHI.IsValid())
         return; // Avoid crash if InitRHI not done yet
 
-    const int32 NumElements = RenderData->VelocityGridCount;
-    if (NumElements == 0 || !RenderData->VelocityGridPtr)
+    const int32 NumElements = RenderData->VelocityGridData.Num();
+    if (NumElements == 0)
         return;
-
-    //UE_LOG(LogTemp, Warning, TEXT("[WindField::PreStage] Called. NumElements=%d"), NumElements);
-
-#if WITH_EDITOR
-    FString Sample;
-    for (int i = 0; i < FMath::Min(5, NumElements); ++i)
-    {
-        const FVector4f& V = RenderData->VelocityGridPtr[i];
-        Sample += FString::Printf(TEXT("[%.2f, %.2f, %.2f] "), V.X, V.Y, V.Z);
-    }
-    //UE_LOG(LogTemp, Warning, TEXT("[WindField::PreStage] First 5 velocities: %s"), *Sample);
-#endif
 
     Buffer->NumElements = NumElements;
 
@@ -434,16 +422,13 @@ void FNDIWindFieldProxy::PreStage(const FNDIGpuComputePreStageContext& Context)
     void* Dest = RHICmdList.LockBuffer(
         Buffer->VelocityGridBufferRHI,
         0,
-        Buffer->NumElements * sizeof(FVector4f),
+        NumElements * sizeof(FVector4f),
         RLM_WriteOnly
     );
-    FMemory::Memcpy(Dest, RenderData->VelocityGridPtr, Buffer->NumElements * sizeof(FVector4f));
+    FMemory::Memcpy(Dest, RenderData->VelocityGridData.GetData(), NumElements * sizeof(FVector4f));
     RHICmdList.UnlockBuffer(Buffer->VelocityGridBufferRHI);
 
     RenderData->bUploadQueuedThisFrame = false;
-
-    /*UE_LOG(LogTemp, Warning, TEXT("[WindField::PreStage] Upload complete to RHI buffer=%p"),
-        Buffer->VelocityGridBufferRHI.GetReference());*/
 }
 
 void FNDIWindFieldProxy::InitializePerInstanceData(const FNiagaraSystemInstanceID& SystemInstance)
