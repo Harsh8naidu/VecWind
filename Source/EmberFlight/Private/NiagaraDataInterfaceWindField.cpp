@@ -309,25 +309,6 @@ void UNiagaraDataInterfaceWindField::SetShaderParameters(
     FNDIWindFieldBuffer* Buffer = RenderData->AssetBuffer;
     ShaderParameters->User_WindField_VelocityGridSRV =
         FNiagaraRenderer::GetSrvOrDefaultFloat4(Buffer ? Buffer->VelocityGridSRV : nullptr);
-
-#if WITH_EDITOR
-    /*UE_LOG(LogTemp, Warning,
-        TEXT("[WindField] SetShaderParameters: SRV=%p Elements=%d Size=(%d,%d,%d)"),
-        (Buffer && Buffer->VelocityGridSRV.IsValid()) ? Buffer->VelocityGridSRV.GetReference() : nullptr,
-        RenderData->VelocityGridCount,
-        RenderData->SizeX, RenderData->SizeY, RenderData->SizeZ);*/
-
-    if (RenderData->VelocityGridPtr && RenderData->VelocityGridCount > 0)
-    {
-        FString Sample;
-        for (int i = 0; i < FMath::Min(3, RenderData->VelocityGridCount); ++i)
-        {
-            const FVector4f& V = RenderData->VelocityGridPtr[i];
-            Sample += FString::Printf(TEXT("[%.2f, %.2f, %.2f] "), V.X, V.Y, V.Z);
-        }
-        //UE_LOG(LogTemp, Warning, TEXT("[WindField] First 3 GPU buffer samples: %s"), *Sample);
-    }
-#endif
 }
 
 void UNiagaraDataInterfaceWindField::ProvidePerInstanceDataForRenderThread(
