@@ -227,7 +227,24 @@ void UNiagaraDataInterfaceWindField::DestroyPerInstanceData(
     FNDIWindFieldInstanceData* InstanceData =
         static_cast<FNDIWindFieldInstanceData*>(PerInstanceData);
 
-    // Explicitly call destructor since memory is managed by Niagara
+    if (FNDIWindFieldData* DataOwner = InstanceData->InstanceDataOwner)
+    {
+        FNDIWindFieldProxy* Proxy = GetProxyAs<FNDIWindFieldProxy>();
+        const FNiagaraSystemInstanceID InstanceID = SystemInstance->GetId();
+
+        // Enqueued FIRST to guarantee that the proxy data is destroyed before the buffer is released
+        ENQUEUE_RENDER_COMMAND(FWindFieldRemoveProxyEntry) (
+            [Proxy, InstanceID](FRHICommandListImmediate& RHICmdList)
+            {
+                Proxy->DestroyPerInstanceData(InstanceID);
+            }
+        );
+
+        DataOwner->ReleaseBuffer(); // enqueue release of GPU buffer on render thread
+        InstanceData->InstanceDataOwner = nullptr; // avoid dangling pointer
+        delete DataOwner; // frees CPU-side arrays on the game thread
+    }
+
     InstanceData->~FNDIWindFieldInstanceData();
 }
 
