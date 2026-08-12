@@ -350,9 +350,8 @@ void UNiagaraDataInterfaceWindField::ProvidePerInstanceDataForRenderThread(
     const int32 ReadIndex = 1 - DataOwner->WriteIndex;
     const TArray<FVector4f>& ReadBuffer = DataOwner->VelocityGridBuffers[ReadIndex];
 
-    // Instead of copying, just pass pointer + size
-    RenderData->VelocityGridPtr = ReadBuffer.GetData();
-    RenderData->VelocityGridCount = ReadBuffer.Num();
+    // Copy Velocity grid data from the read buffer to the render data
+    RenderData->VelocityGridData = ReadBuffer;
 
     // --- Copy basic field info from the asset ---
     if (UWindVectorField* Field = DataOwner->WindField)
@@ -396,12 +395,9 @@ void FNDIWindFieldProxy::ConsumePerInstanceDataFromGameThread(void* PerInstanceD
     TargetData.AssetBuffer = SourceData->AssetBuffer;
     TargetData.bUploadQueuedThisFrame = SourceData->bUploadQueuedThisFrame;
 
-    // Just forward the pointer & size, no allocation/copy
-    TargetData.VelocityGridPtr = SourceData->VelocityGridPtr;
-    TargetData.VelocityGridCount = SourceData->VelocityGridCount;
-
-    /*UE_LOG(LogTemp, Warning, TEXT("[WindField] ConsumePerInstanceData: Instance %llu -> %d elements, zero-copy"),
-        Instance, TargetData.VelocityGridCount);*/
+    // Since this is a render thread
+    // SourceData is transient (about to be destroyed once consumed), so we move instead of copying
+    TargetData.VelocityGridData = MoveTemp(SourceData->VelocityGridData);
 }
 
 void FNDIWindFieldProxy::PreStage(const FNDIGpuComputePreStageContext& Context)

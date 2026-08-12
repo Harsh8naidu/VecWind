@@ -105,8 +105,7 @@ struct FNDIWindFieldRenderData
     int32 SizeY;
     int32 SizeZ;
 
-    const FVector4f* VelocityGridPtr = nullptr; // Zero-copy: Only a pointer and count now
-    int32 VelocityGridCount = 0;
+    TArray<FVector4f> VelocityGridData; // render thread copy of the velocity grid data for this instance
 
     FNDIWindFieldBuffer* AssetBuffer = nullptr; // Raw pointer to GPU buffer, not owning - managed by FNDIWindFieldData
     bool bUploadQueuedThisFrame = false;
