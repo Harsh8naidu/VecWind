@@ -64,12 +64,12 @@ struct FNDIWindFieldBuffer : public FRenderResource
 
 // GPU Shader Parameters Struct
 BEGIN_SHADER_PARAMETER_STRUCT(FNDIWindFieldShaderParameters, )
-    SHADER_PARAMETER(FVector3f, User_WindField_FieldOrigin)
-    SHADER_PARAMETER(float, User_WindField_CellSize)
-    SHADER_PARAMETER(uint32, User_WindField_SizeX)
-    SHADER_PARAMETER(uint32, User_WindField_SizeY)
-    SHADER_PARAMETER(uint32, User_WindField_SizeZ)
-    SHADER_PARAMETER_SRV(StructuredBuffer<float4>, User_WindField_VelocityGridSRV)
+    SHADER_PARAMETER(FVector3f, FieldOrigin)
+    SHADER_PARAMETER(float, CellSize)
+    SHADER_PARAMETER(uint32, SizeX)
+    SHADER_PARAMETER(uint32, SizeY)
+    SHADER_PARAMETER(uint32, SizeZ)
+    SHADER_PARAMETER_SRV(StructuredBuffer<float4>, VelocityGridSRV)
 END_SHADER_PARAMETER_STRUCT()
 
 struct FNDIWindFieldData;

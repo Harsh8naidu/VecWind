@@ -229,14 +229,14 @@ void UNiagaraDataInterfaceWindField::DestroyPerInstanceData(
 
     if (FNDIWindFieldData* DataOwner = InstanceData->InstanceDataOwner)
     {
-        FNDIWindFieldProxy* Proxy = GetProxyAs<FNDIWindFieldProxy>();
+        FNDIWindFieldProxy* WindFieldProxy = GetProxyAs<FNDIWindFieldProxy>();
         const FNiagaraSystemInstanceID InstanceID = SystemInstance->GetId();
 
         // Enqueued FIRST to guarantee that the proxy data is destroyed before the buffer is released
         ENQUEUE_RENDER_COMMAND(FWindFieldRemoveProxyEntry) (
-            [Proxy, InstanceID](FRHICommandListImmediate& RHICmdList)
+            [WindFieldProxy, InstanceID](FRHICommandListImmediate& RHICmdList)
             {
-                Proxy->DestroyPerInstanceData(InstanceID);
+                WindFieldProxy->DestroyPerInstanceData(InstanceID);
             }
         );
 
@@ -262,7 +262,7 @@ bool UNiagaraDataInterfaceWindField::AppendCompileHash(FNiagaraCompileHashVisito
 void UNiagaraDataInterfaceWindField::GetParameterDefinitionHLSL(const FNiagaraDataInterfaceGPUParamInfo& ParamInfo, FString& OutHLSL)
 {
     const TMap<FString, FStringFormatArg> TemplateArgs = {
-        {TEXT("ParameterName"), TEXT(""),} // This will be replaced at compile time by the stuff in .ush
+        {TEXT("ParameterName"), ParamInfo.DataInterfaceHLSLSymbol} // This will be replaced at compile time by the stuff in .ush
     };
     AppendTemplateHLSL(OutHLSL, TemplateShaderFilePath, TemplateArgs);
 }
@@ -316,15 +316,15 @@ void UNiagaraDataInterfaceWindField::SetShaderParameters(
         return;
 
     // Basic field properties
-    ShaderParameters->User_WindField_FieldOrigin = RenderData->FieldOrigin;
-    ShaderParameters->User_WindField_CellSize = RenderData->CellSize;
-    ShaderParameters->User_WindField_SizeX = RenderData->SizeX;
-    ShaderParameters->User_WindField_SizeY = RenderData->SizeY;
-    ShaderParameters->User_WindField_SizeZ = RenderData->SizeZ;
+    ShaderParameters->FieldOrigin = RenderData->FieldOrigin;
+    ShaderParameters->CellSize = RenderData->CellSize;
+    ShaderParameters->SizeX = RenderData->SizeX;
+    ShaderParameters->SizeY = RenderData->SizeY;
+    ShaderParameters->SizeZ = RenderData->SizeZ;
 
     // Bind the SRV from our GPU buffer
     FNDIWindFieldBuffer* Buffer = RenderData->AssetBuffer;
-    ShaderParameters->User_WindField_VelocityGridSRV =
+    ShaderParameters->VelocityGridSRV =
         FNiagaraRenderer::GetSrvOrDefaultFloat4(Buffer ? Buffer->VelocityGridSRV : nullptr);
 }
 
