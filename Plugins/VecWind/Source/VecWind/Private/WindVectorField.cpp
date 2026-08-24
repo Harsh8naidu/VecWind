@@ -314,6 +314,7 @@ void UWindVectorField::ResetField()
 {
     VelocityGrid.Empty();
     VelocityGrid.SetNumZeroed(SizeX * SizeY * SizeZ);
+    bInitialized = false;
     Initialize();
 }
 
