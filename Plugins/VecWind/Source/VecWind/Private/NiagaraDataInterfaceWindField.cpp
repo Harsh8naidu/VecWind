@@ -18,7 +18,7 @@
 #define LOCTEXT_NAMESPACE "NiagaraWindFieldDI"
 
 static const FName SampleWindFieldName(TEXT("SampleWindAtLocation"));
-static const TCHAR* TemplateShaderFilePath = TEXT("/Plugin/Experimental/ChaosNiagara/NiagaraDataInterfaceWindField.ush");
+static const TCHAR* TemplateShaderFilePath = TEXT("/Plugins/VecWind/NiagaraDataInterfaceWindField.ush");
 
 UNiagaraDataInterfaceWindField::UNiagaraDataInterfaceWindField()
 {
@@ -57,7 +57,7 @@ void UNiagaraDataInterfaceWindField::SampleWindAtLocation(FVectorVMExternalFunct
     }
 }
 
-void UNiagaraDataInterfaceWindField::GetFunctions(TArray<FNiagaraFunctionSignature>& OutFunctions)
+void UNiagaraDataInterfaceWindField::GetFunctionsInternal(TArray<FNiagaraFunctionSignature>& OutFunctions) const
 {
     FNiagaraFunctionSignature Sig;
     Sig.Name = SampleWindFieldName;
@@ -139,7 +139,15 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
 {
     FNDIWindFieldInstanceData* InstanceData = static_cast<FNDIWindFieldInstanceData*>(PerInstanceData);
     if (!InstanceData || !InstanceData->WindField || !InstanceData->InstanceDataOwner)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[VecWind] PerInstanceTick skipped: InstanceData=%p WindField=%p DataOwner=%p"),
+            InstanceData, InstanceData ? InstanceData->WindField : nullptr,
+            InstanceData ? InstanceData->InstanceDataOwner : nullptr);
         return false;
+    }
+
+    // Drive the wind simulation forward every tick (CPU side) and update the velocity grid
+    InstanceData->WindField->Update(DeltaSeconds);
 
     FNDIWindFieldData* DataOwner = InstanceData->InstanceDataOwner;
 
@@ -153,6 +161,17 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
     for (const FVector& V : SourceGrid)
     {
         WriteBuffer.Add(FVector4f(V.X, V.Y, V.Z, 0.0f));
+    }
+
+    ++InstanceData->TickCount;
+    if (InstanceData->TickCount == 1 || InstanceData->TickCount % 120 == 0)
+    {
+        const FVector FirstVelocity = SourceGrid.IsEmpty() ? FVector::ZeroVector : SourceGrid[0];
+        UE_LOG(LogTemp, Display,
+            TEXT("[VecWind] Tick=%llu DI=%p Field=%s (%p) dt=%.4f Bias=%s Scale=%.3f Grid=%d Write=%d V0=%s"),
+            InstanceData->TickCount, this, *GetNameSafe(InstanceData->WindField), InstanceData->WindField,
+            DeltaSeconds, *InstanceData->WindField->WindBias.ToString(), InstanceData->WindField->WindScale,
+            SourceGrid.Num(), WriteIndex, *FirstVelocity.ToString());
     }
 
     return true; // request RT update

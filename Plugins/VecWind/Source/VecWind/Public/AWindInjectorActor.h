@@ -5,7 +5,7 @@
 
 #include "AWindInjectorActor.generated.h"
 UCLASS()  
-class EMBERFLIGHT_API AWindInjectorActor : public AActor  
+class VECWIND_API AWindInjectorActor : public AActor  
 {  
     GENERATED_BODY()  
 

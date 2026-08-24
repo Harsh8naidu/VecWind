@@ -14,16 +14,9 @@ public class EmberFlight : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore", 
-			"EnhancedInput", 
-			"Niagara" ,
-			"NiagaraCore",
-			"NiagaraShader",
-		});
-
-		// Optional but can be helpful for Niagara debugging or interaction
-		PrivateDependencyModuleNames.AddRange(new string[] {
-			"RenderCore",
-			"RHI"
+			"EnhancedInput",
+			"VecWind",
+            "Niagara"
 		});
 
 		// Editor-only dependencies
@@ -36,7 +29,5 @@ public class EmberFlight : ModuleRules
 				"AssetTools"
 			});
 		}
-
-		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "ThirdParty/FastNoise"));
 	}
 }

@@ -6,7 +6,7 @@
 #include "FastNoiseLite.h"
 #include "WindVectorField.generated.h"
 UCLASS(Blueprintable, EditInlineNew, DefaultToInstanced)
-class EMBERFLIGHT_API UWindVectorField : public UObject
+class VECWIND_API UWindVectorField : public UObject
 {
     GENERATED_BODY()
 

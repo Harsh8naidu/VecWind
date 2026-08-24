@@ -8,7 +8,7 @@
 #include "NiagaraDataInterfaceWindField.generated.h"
 
 UCLASS(EditInlineNew, Category = "Wind", meta = (DisplayName = "WindField", NiagaraDataInterface = "True"), Blueprintable, BlueprintType)
-class EMBERFLIGHT_API UNiagaraDataInterfaceWindField : public UNiagaraDataInterface
+class VECWIND_API UNiagaraDataInterfaceWindField : public UNiagaraDataInterface
 {
     GENERATED_BODY()
 
@@ -20,7 +20,9 @@ public:
     TObjectPtr<UWindVectorField> WindField;
 
     // CPU Sim Functionality
-    virtual void GetFunctions(TArray<FNiagaraFunctionSignature>& OutFunctions) override;
+#if WITH_EDITORONLY_DATA
+    virtual void GetFunctionsInternal(TArray<FNiagaraFunctionSignature>& OutFunctions) const override;
+#endif
     virtual void GetVMExternalFunction(const FVMExternalFunctionBindingInfo& BindingInfo, void* InstanceData, FVMExternalFunction& OutFunc) override;
     virtual bool CopyToInternal(UNiagaraDataInterface* Destination) const override;
     virtual bool Equals(const UNiagaraDataInterface* Other) const override;
@@ -87,6 +89,9 @@ struct FNDIWindFieldInstanceData
     FNDIWindFieldData* InstanceDataOwner = nullptr;
 
     int32 WriteIndex = 0;
+
+    // ONLY FOR DIAGNOSTIC PURPOSES - Kept per instance so multiple DI nodes can be distinguised in PIE
+    uint64 TickCount = 0;
 
     // Destructor to ensure breaking pointer links (not really needed tho but safe)
     void Reset()

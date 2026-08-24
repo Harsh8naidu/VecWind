@@ -27,7 +27,6 @@ void FEmberFlightModule::ShutdownModule()
 {
     
 }
-#endif
 
 void ListAllNiagaraInterfaces()
 {
@@ -40,6 +39,5 @@ void ListAllNiagaraInterfaces()
             UE_LOG(LogTemp, Warning, TEXT("Found DI: %s"), *It->GetName());
         }
     }
-
-    UE_LOG(LogTemp, Warning, TEXT("Wind DI class is: %s"), *UNiagaraDataInterfaceWindField::StaticClass()->GetName());
 }
+#endif

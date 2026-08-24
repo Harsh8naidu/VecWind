@@ -1,0 +1,52 @@
+#ifndef WIND_FIELD_COMMON
+#define WIND_FIELD_COMMON
+
+// Generic function to sample wind velocity from a structured buffer representing a 3D grid of velocities
+// Shared across all instances - must only be defined once, so it stays guarded.
+float3 WindField_SampleWindTexture(
+    float3 WorldPos,
+    float3 FieldOrigin,
+    float CellSize,
+    uint SizeX,
+    uint SizeY,
+    uint SizeZ,
+    StructuredBuffer<float4> VelocityGridSRV
+)
+{
+    // Compute grid index from world position, clamped to bounds
+    int3 GridIndex = int3((WorldPos - FieldOrigin) / CellSize);
+    GridIndex = clamp(GridIndex, int3(0,0,0), int3(SizeX-1, SizeY-1, SizeZ-1));
+    uint FlatIndex = GridIndex.x + SizeX * (GridIndex.y + SizeY * GridIndex.z);
+
+    // Read velocity from structured buffer; w component is padding
+    float4 Velocity = VelocityGridSRV[FlatIndex];
+    
+    return Velocity.xyz;
+}
+
+// Macro to easily define sampling function for different parameter sets
+#define DEFINE_WIND_FIELD_SAMPLE(ParameterName) \
+float3 ParameterName##_SampleWindTexture(float3 WorldPos) \
+{ \
+    return WindField_SampleWindTexture( \
+        WorldPos, \
+        ParameterName##_FieldOrigin, \
+        ParameterName##_CellSize, \
+        ParameterName##_SizeX, \
+        ParameterName##_SizeY, \
+        ParameterName##_SizeZ, \
+        ParameterName##_VelocityGridSRV \
+    ); \
+}
+#endif // WIND_FIELD_COMMON
+
+// NOT guarded, must run fresh on every insertion, once per DI instance,
+// so each instance gets its own uniforms and its own sample function.
+float3 {ParameterName}_FieldOrigin;
+float  {ParameterName}_CellSize;
+uint   {ParameterName}_SizeX;
+uint   {ParameterName}_SizeY;
+uint   {ParameterName}_SizeZ;
+StructuredBuffer<float4> {ParameterName}_VelocityGridSRV;
+
+DEFINE_WIND_FIELD_SAMPLE({ParameterName})
