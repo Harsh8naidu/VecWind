@@ -179,7 +179,6 @@ void UWindVectorField::Update(float DeltaTime)
 {
     if (VelocityGrid.Num() == 0)
     {
-        UE_LOG(LogTemp, Error, TEXT("[WindField] Update called before Initialize! Skipping update."));
         return;
     }
 
@@ -253,7 +252,6 @@ FVector UWindVectorField::SampleWindAtPosition(const FVector& WorldPos) const
 {
     if (VelocityGrid.Num() == 0 || SizeX <= 1 || SizeY <= 1 || SizeZ <= 1)
     {
-        UE_LOG(LogTemp, Warning, TEXT("SampleWindAtPosition called on uninitialized field. Asset name: %s"), *GetNameSafe(this));
         return FVector::ZeroVector;
     }
 
