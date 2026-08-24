@@ -212,6 +212,16 @@ void UWindVectorField::Update(float DeltaTime)
             }
         }
     }
+
+    ++UpdateCount;
+    if (UpdateCount == 1 || UpdateCount % 120 == 0)
+    {
+        const FVector FirstVelocity = VelocityGrid.IsEmpty() ? FVector::ZeroVector : VelocityGrid[0];
+        UE_LOG(LogTemp, Display,
+            TEXT("[VecWind] Update=%llu Field=%s (%p) dt=%.4f Bias=%s Scale=%.3f Grid=%d V0=%s"),
+            UpdateCount, *GetNameSafe(this), this, DeltaTime, *WindBias.ToString(), WindScale,
+            VelocityGrid.Num(), *FirstVelocity.ToString());
+    }
 }
 
 void UWindVectorField::InjectWindAtPosition(const FVector& WorldPos, const FVector& VelocityToInject, float Radius)

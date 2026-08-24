@@ -81,6 +81,7 @@ private:
     bool bIncreasing = false;
     bool bInitialized = false;
     bool isDone = false;
+    uint64 UpdateCount = 0;
 
     // Simulation grid
     TArray<FVector> VelocityGrid;
