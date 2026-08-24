@@ -205,6 +205,19 @@ bool UNiagaraDataInterfaceWindField::InitPerInstanceData(void* PerInstanceData, 
         return false;
     }
 
+    // Niagara can duplicate the DI UObject without carrying over this transient
+    // velocity grid. Rebuild (or reinitialize) it before either CPU sampling or GPU buffers use it
+    if (WindField->GetVelocityGrid().IsEmpty())
+    {
+        WindField->Initialize();
+        if (WindField->GetVelocityGrid().IsEmpty())
+        {
+            UE_LOG(LogTemp, Warning, TEXT("[VecWind] Failed to initialize field %s (%p) for DI %s (%p)"),
+                *GetNameSafe(WindField), WindField.Get(), *GetNameSafe(this), this);
+            return false;
+        }
+    }
+
     // Create per-instance owner data
     FNDIWindFieldData* DataOwner = new FNDIWindFieldData();
     DataOwner->WindField = WindField;

@@ -10,8 +10,19 @@ UWindVectorField::UWindVectorField()
 
 void UWindVectorField::Initialize()
 {
-    if (bInitialized || SizeX <= 0 || SizeY <= 0 || SizeZ <= 0 || CellSize <= 0.0f)
+    // A Niagara DI may be duplicated at runtime. Those copies can retain the
+    // initialized flag while their transient grid is empty, so only consider 
+    // this field initialized hwne the backing grid exists as well
+    if (bInitialized && VelocityGrid.Num() > 0)
     {
+        return;
+    }
+
+    bInitialized = false;
+    if (SizeX <= 0 || SizeY <= 0 || SizeZ <= 0 || CellSize <= 0.0f)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("WindVectorField::Initialize failed — invalid grid size (%d,%d,%d) or CellSize (%.2f) on asset %s"),
+            SizeX, SizeY, SizeZ, CellSize, *GetName());
         return;
     }
 
