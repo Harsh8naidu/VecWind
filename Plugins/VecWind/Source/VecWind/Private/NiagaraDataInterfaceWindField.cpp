@@ -141,9 +141,10 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
     if (!InstanceData || !InstanceData->WindField || !InstanceData->InstanceDataOwner)
     {
         // UNCOMMENT THIS LINE TO TO KNOW WHEN THE WIND FIELD IS NOT TICKED (E.G. WHEN THE SYSTEM IS NOT ACTIVE OR THE WIND FIELD IS NULL)
-        //UE_LOG(LogTemp, Warning, TEXT("[VecWind] PerInstanceTick skipped: InstanceData=%p WindField=%p DataOwner=%p"),
+        // THIS IS USEFUL WHEN USING MULTIPLE DI INSTANCES IN THE SAME SYSTEM, AS ONLY THE FIRST ACTIVE INSTANCE WILL TICK THE WIND FIELD SIMULATION
+        /*UE_LOG(LogTemp, Warning, TEXT("[VecWind] PerInstanceTick skipped: InstanceData=%p WindField=%p DataOwner=%p"),
             InstanceData, InstanceData ? InstanceData->WindField : nullptr,
-            InstanceData ? InstanceData->InstanceDataOwner : nullptr);
+            InstanceData ? InstanceData->InstanceDataOwner : nullptr);*/
         return false;
     }
 
@@ -164,7 +165,10 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
         WriteBuffer.Add(FVector4f(V.X, V.Y, V.Z, 0.0f));
     }
 
-    ++InstanceData->TickCount;
+    // UNCOMMENT THIS LINE TO LOG THE WIND FIELD TICK COUNT 
+    // AND FIRST VELOCITY VALUE EVERY 120 TICKS (APPROXIMATELY EVERY 2 SECONDS AT 60 FPS)
+
+    /*++InstanceData->TickCount;
     if (InstanceData->TickCount == 1 || InstanceData->TickCount % 120 == 0)
     {
         const FVector FirstVelocity = SourceGrid.IsEmpty() ? FVector::ZeroVector : SourceGrid[0];
@@ -173,7 +177,7 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
             InstanceData->TickCount, this, *GetNameSafe(InstanceData->WindField), InstanceData->WindField,
             DeltaSeconds, *InstanceData->WindField->WindBias.ToString(), InstanceData->WindField->WindScale,
             SourceGrid.Num(), WriteIndex, *FirstVelocity.ToString());
-    }
+    }*/
 
     return true; // request RT update
 }
@@ -579,10 +583,10 @@ void FNDIWindFieldBuffer::ReleaseRHI()
 {
     if (VelocityGridBufferRHI.IsValid() || VelocityGridSRV.IsValid())
     {
-        UE_LOG(LogTemp, Warning,
+        /*UE_LOG(LogTemp, Warning,
             TEXT("[WindField::ReleaseRHI] Releasing GPU resources. Buffer=%p SRV=%p"),
             VelocityGridBufferRHI.GetReference(),
-            VelocityGridSRV.GetReference());
+            VelocityGridSRV.GetReference());*/
     }
 
     VelocityGridBufferRHI.SafeRelease();

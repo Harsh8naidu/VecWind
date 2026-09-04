@@ -12,7 +12,7 @@ void UWindVectorField::Initialize()
 {
     // A Niagara DI may be duplicated at runtime. Those copies can retain the
     // initialized flag while their transient grid is empty, so only consider 
-    // this field initialized hwne the backing grid exists as well
+    // this field initialized when the backing grid also exists.
     if (bInitialized && VelocityGrid.Num() > 0)
     {
         return;
