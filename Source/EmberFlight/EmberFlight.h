@@ -11,13 +11,5 @@
 class FEmberFlightModule : public FDefaultGameModuleImpl
 {
 public:
-#if WITH_EDITOR
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
-#endif
-};
 
-/**
-* Utility function to list all Niagara Data Interfaces in the system
-*/
-void ListAllNiagaraInterfaces();
+};

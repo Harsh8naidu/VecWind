@@ -13,7 +13,10 @@ public class VecWindEditor : ModuleRules
             "Engine",
             "VecWind",
             "UnrealEd",
-            "AssetTools"
+            "AssetTools",
+            "Projects",
+            "Slate",
+            "SlateCore"
         });
     }
 }

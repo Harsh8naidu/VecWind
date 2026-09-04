@@ -16,18 +16,6 @@ public class EmberFlight : ModuleRules
 			"InputCore", 
 			"EnhancedInput",
 			"VecWind",
-            "Niagara"
 		});
-
-		// Editor-only dependencies
-		if(Target.bBuildEditor)
-		{
-			PrivateDependencyModuleNames.AddRange(new string[] {
-				"UnrealEd",
-				"NiagaraEditor",
-				"EditorFramework",
-				"AssetTools"
-			});
-		}
 	}
 }
