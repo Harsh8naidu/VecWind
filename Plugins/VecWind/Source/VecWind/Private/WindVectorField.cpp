@@ -213,7 +213,9 @@ void UWindVectorField::Update(float DeltaTime)
         }
     }
 
-    ++UpdateCount;
+    // IF YOU NEED THE UPDATES PLEASE UNCOMMENT THE FOLLOWING LINES. THEY WILL LOG THE WIND FIELD UPDATE INFO EVERY 120 UPDATES.
+
+    /*++UpdateCount;
     if (UpdateCount == 1 || UpdateCount % 120 == 0)
     {
         const FVector FirstVelocity = VelocityGrid.IsEmpty() ? FVector::ZeroVector : VelocityGrid[0];
@@ -221,7 +223,7 @@ void UWindVectorField::Update(float DeltaTime)
             TEXT("[VecWind] Update=%llu Field=%s (%p) dt=%.4f Bias=%s Scale=%.3f Grid=%d V0=%s"),
             UpdateCount, *GetNameSafe(this), this, DeltaTime, *WindBias.ToString(), WindScale,
             VelocityGrid.Num(), *FirstVelocity.ToString());
-    }
+    }*/
 }
 
 void UWindVectorField::InjectWindAtPosition(const FVector& WorldPos, const FVector& VelocityToInject, float Radius)

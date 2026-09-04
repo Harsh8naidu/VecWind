@@ -140,7 +140,8 @@ bool UNiagaraDataInterfaceWindField::PerInstanceTick(void* PerInstanceData, FNia
     FNDIWindFieldInstanceData* InstanceData = static_cast<FNDIWindFieldInstanceData*>(PerInstanceData);
     if (!InstanceData || !InstanceData->WindField || !InstanceData->InstanceDataOwner)
     {
-        UE_LOG(LogTemp, Warning, TEXT("[VecWind] PerInstanceTick skipped: InstanceData=%p WindField=%p DataOwner=%p"),
+        // UNCOMMENT THIS LINE TO TO KNOW WHEN THE WIND FIELD IS NOT TICKED (E.G. WHEN THE SYSTEM IS NOT ACTIVE OR THE WIND FIELD IS NULL)
+        //UE_LOG(LogTemp, Warning, TEXT("[VecWind] PerInstanceTick skipped: InstanceData=%p WindField=%p DataOwner=%p"),
             InstanceData, InstanceData ? InstanceData->WindField : nullptr,
             InstanceData ? InstanceData->InstanceDataOwner : nullptr);
         return false;
