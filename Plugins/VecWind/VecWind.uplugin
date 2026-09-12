@@ -5,7 +5,7 @@
     "FriendlyName": "VecWind",
     "Description": "A real-time, grid-based 3D wind simulation for Unreal Engine, with CPU and GPU Niagara sampling, dynamic wind injection, and runtime-configurable turbulence.",
     "Category": "FX",
-    "CanContainContent": false,
+    "CanContainContent": true,
     "IsBetaVersion": true,
     "Modules": [
         {

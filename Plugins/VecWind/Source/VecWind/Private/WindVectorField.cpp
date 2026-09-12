@@ -228,6 +228,16 @@ void UWindVectorField::Update(float DeltaTime)
 
 void UWindVectorField::InjectWindAtPosition(const FVector& WorldPos, const FVector& VelocityToInject, float Radius)
 {
+    const int32 ExpectedCellCount = SizeX * SizeY * SizeZ;
+
+    if (SizeX <= 0 || SizeY <= 0 || SizeZ <= 0 ||
+        CellSize <= 0.0f ||
+        Radius <= 0.0f ||
+        VelocityGrid.Num() != ExpectedCellCount)
+    {
+        return;
+    }
+
     FVector LocalWorldPos = WorldPos - FieldOrigin;
     FVector GridPosF = LocalWorldPos / CellSize;
 
@@ -267,7 +277,7 @@ FVector UWindVectorField::SampleWindAtPosition(const FVector& WorldPos) const
         return FVector::ZeroVector;
     }
 
-    FVector GridPos = WorldPos / CellSize;
+    FVector GridPos = (WorldPos - FieldOrigin) / CellSize;
     return SampleVelocityAtGridPosition(GridPos);
 }
 

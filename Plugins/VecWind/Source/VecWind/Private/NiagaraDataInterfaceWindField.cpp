@@ -57,6 +57,7 @@ void UNiagaraDataInterfaceWindField::SampleWindAtLocation(FVectorVMExternalFunct
     }
 }
 
+#if WITH_EDITORONLY_DATA
 void UNiagaraDataInterfaceWindField::GetFunctionsInternal(TArray<FNiagaraFunctionSignature>& OutFunctions) const
 {
     FNiagaraFunctionSignature Sig;
@@ -84,6 +85,7 @@ void UNiagaraDataInterfaceWindField::GetFunctionsInternal(TArray<FNiagaraFunctio
     
     OutFunctions.Add(Sig);
 }
+#endif
 
 DEFINE_NDI_DIRECT_FUNC_BINDER(UNiagaraDataInterfaceWindField, SampleWindAtLocation);
 
