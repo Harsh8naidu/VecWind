@@ -38,7 +38,7 @@ The map contains 4 Niagara demonstrations:
 - CPU wind sampling
 - GPU wind sampling
 - GPU sampling with two WindField data interfaces in one Niagara system
-- [add wind injector]
+- Wind Injector
 
 Use the in-level controls to activate one demonstration at a time.
 
